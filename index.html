@@ -2,3378 +2,482 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0c0f">
 <title>Color Battle</title>
-
 <style>
-* {
-    box-sizing: border-box;
+:root {
+    color-scheme: dark;
+    --bg: #0b0c0f;
+    --panel: #13151a;
+    --panel-2: #191c22;
+    --border: #2a2e37;
+    --text: #f4f6f8;
+    --muted: #9097a3;
+    --accent: #f5f7fa;
+    --danger: #ff6b6b;
 }
-
+* { box-sizing: border-box; }
+html { background: var(--bg); }
 body {
     margin: 0;
-    background: #111;
-    color: #eee;
-    font-family: system-ui, sans-serif;
+    min-height: 100%;
+    background:
+        radial-gradient(circle at 50% -120px, rgba(255,255,255,.08), transparent 340px),
+        var(--bg);
+    color: var(--text);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
-
-main {
-    width: min(1050px, 100%);
-    margin: auto;
-    padding: 24px;
+button, input { font: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+.app {
+    width: min(1120px, 100%);
+    margin: 0 auto;
+    padding: 24px 20px 42px;
 }
-
-h1 {
+.hero {
     text-align: center;
+    margin-bottom: 20px;
+}
+.hero h1 {
     margin: 0;
+    font-size: clamp(26px, 5vw, 40px);
+    letter-spacing: -.04em;
 }
-
-.subtitle {
-    text-align: center;
-    color: #888;
-    margin: 8px 0 22px;
+.hero p {
+    margin: 7px 0 0;
+    color: var(--muted);
+    font-size: 14px;
 }
-
-/* ==============================
-   Battle
-============================== */
-
 .battle {
     display: grid;
-    grid-template-columns: 1fr 70px 1fr;
-    align-items: center;
+    grid-template-columns: minmax(0,1fr) 64px minmax(0,1fr);
     gap: 14px;
+    align-items: center;
 }
-
 .vs {
     text-align: center;
-    font-size: 28px;
+    color: #555d69;
     font-weight: 900;
-    color: #555;
+    font-size: 25px;
+    letter-spacing: .08em;
 }
-
 .color-button {
     position: relative;
-    height: 350px;
-
-    border: 0;
-    border-radius: 18px;
-
+    min-width: 0;
+    height: clamp(270px, 38vw, 410px);
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 22px;
     overflow: hidden;
     cursor: pointer;
-
-    transition:
-        transform 100ms ease,
-        filter 100ms ease,
-        box-shadow 100ms ease;
-
-    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+    transition: transform 110ms ease, filter 110ms ease, box-shadow 110ms ease;
+    touch-action: manipulation;
 }
-
-.color-button:hover {
-    transform: translateY(-3px);
+.color-button:focus-visible {
+    box-shadow: 0 0 0 4px #fff, 0 0 0 7px #181b21;
 }
-
-.color-button:active {
-    transform: scale(0.97);
+@media (hover:hover) and (pointer:fine) {
+    .color-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 18px 48px rgba(0,0,0,.36);
+    }
 }
-
+.color-button:active { transform: scale(.975); }
 .color-button.chosen {
-    animation: chosen 180ms ease;
-    box-shadow: 0 0 0 6px white;
-    z-index: 2;
+    animation: chosen 190ms ease-out;
+    box-shadow: 0 0 0 5px #fff, 0 16px 42px rgba(0,0,0,.42);
+    z-index: 3;
 }
-
-.color-button.loser {
-    filter: brightness(0.55) saturate(0.6);
-    transform: scale(0.96);
+.color-button.rejected {
+    filter: brightness(.56) saturate(.58);
+    transform: scale(.965);
 }
-
 .color-button.chosen::after {
     content: "✓";
-
     position: absolute;
     inset: 0;
-
     display: grid;
     place-items: center;
-
-    color: white;
-    font-size: 80px;
-    font-weight: 900;
-
-    text-shadow: 0 3px 14px #000;
-
-    animation: check 180ms ease;
+    color: #fff;
+    font-size: clamp(60px, 10vw, 96px);
+    font-weight: 1000;
+    text-shadow: 0 4px 18px rgba(0,0,0,.5);
+    animation: check .19s ease-out;
 }
-
 @keyframes chosen {
-    50% {
-        transform: scale(0.96);
-    }
-
-    100% {
-        transform: scale(1.02);
-    }
+    0% { transform: scale(1); }
+    45% { transform: scale(.955); }
+    100% { transform: scale(1.018); }
 }
-
 @keyframes check {
-    from {
-        opacity: 0;
-        transform: scale(0.4);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    from { opacity: 0; transform: scale(.38); }
+    to { opacity: 1; transform: scale(1); }
 }
-
 .burst {
     position: absolute;
-
-    width: 20px;
-    height: 20px;
-
-    border: 4px solid rgba(255,255,255,0.85);
-    border-radius: 50%;
-
+    width: 18px;
+    height: 18px;
+    border: 4px solid rgba(255,255,255,.92);
+    border-radius: 999px;
+    transform: translate(-50%,-50%);
     pointer-events: none;
-
-    transform: translate(-50%, -50%);
-
-    animation: burst 350ms ease-out forwards;
+    animation: burst .36s ease-out forwards;
 }
-
 @keyframes burst {
-    to {
-        width: 180px;
-        height: 180px;
-        opacity: 0;
-    }
+    to { width: 190px; height: 190px; opacity: 0; }
 }
-
 .color-info {
     position: absolute;
-
     left: 12px;
     right: 12px;
     bottom: 12px;
-
-    padding: 10px 12px;
-
-    border-radius: 10px;
-
-    background: rgba(0,0,0,0.55);
-    color: white;
-
-    text-align: left;
-
-    pointer-events: none;
-}
-
-.hex {
-    font-size: 21px;
-    font-weight: 800;
-}
-
-.rgb {
-    font-size: 12px;
-    opacity: 0.8;
-}
-
-/* ==============================
-   Phase
-============================== */
-
-.phase-panel {
-    margin-top: 24px;
-
-    padding: 18px;
-
-    border: 1px solid #303030;
+    padding: 11px 13px;
     border-radius: 12px;
-
-    background: #181818;
+    background: rgba(5,7,10,.58);
+    color: white;
+    text-align: left;
+    pointer-events: none;
+    backdrop-filter: blur(8px);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
 }
-
-.phase-top {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    align-items: end;
-}
-
-.phase-label {
-    font-size: 12px;
-    color: #777;
-}
-
-.phase-name {
-    margin-top: 3px;
-
-    font-size: 23px;
-    font-weight: 800;
-}
-
-.progress-percent {
-    font-size: 28px;
+.hex {
     font-weight: 900;
+    font-size: clamp(17px, 2.5vw, 23px);
+    letter-spacing: .02em;
 }
-
-.progress-track {
-    height: 12px;
-
-    margin-top: 12px;
-
-    background: #333;
-    border-radius: 999px;
-
-    overflow: hidden;
+.rgb {
+    margin-top: 2px;
+    font-size: 12px;
+    opacity: .74;
 }
-
-.progress-bar {
-    width: 0%;
-    height: 100%;
-
-    background: #eee;
-
-    transition: width 200ms ease;
-}
-
-/* ==============================
-   Stats
-============================== */
-
-.stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-
-    gap: 8px;
-
-    margin-top: 10px;
-}
-
-.stat {
-    padding: 12px;
-
-    background: #181818;
-
-    border: 1px solid #292929;
-    border-radius: 8px;
-
-    text-align: center;
-}
-
-.stat span {
-    display: block;
-}
-
-.stat-label {
-    color: #777;
-    font-size: 11px;
-}
-
-.stat-value {
-    margin-top: 3px;
-
-    font-size: 18px;
-    font-weight: 800;
-}
-
-/* ==============================
-   Controls
-============================== */
-
-.controls {
+.toolbar {
     display: flex;
     justify-content: center;
-
-    gap: 10px;
-
-    margin-top: 18px;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 16px;
 }
-
-.controls button {
+.btn {
     min-height: 44px;
-
-    padding: 8px 18px;
-
-    border: 1px solid #444;
-    border-radius: 8px;
-
-    background: #252525;
-    color: white;
-
+    padding: 9px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #1b1e24;
+    color: var(--text);
     cursor: pointer;
+    transition: background .12s ease, transform .12s ease, border-color .12s ease;
 }
-
-/* ==============================
-   Tier
-============================== */
-
-.ranking {
-    margin-top: 36px;
+.btn:hover { background: #232730; }
+.btn:active { transform: scale(.97); }
+.btn.primary {
+    background: #f2f4f7;
+    color: #111318;
+    border-color: #f2f4f7;
+    font-weight: 800;
 }
-
+.btn.danger { color: #ff9b9b; }
+.btn:disabled {
+    opacity: .45;
+    cursor: default;
+    transform: none;
+}
+.panel {
+    margin-top: 22px;
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: rgba(19,21,26,.94);
+}
+.progress-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: end;
+}
+.eyebrow {
+    color: var(--muted);
+    font-size: 12px;
+}
+.big-value {
+    margin-top: 2px;
+    font-size: clamp(28px, 5vw, 38px);
+    font-weight: 950;
+    letter-spacing: -.04em;
+}
+.status-text {
+    color: var(--muted);
+    text-align: right;
+    font-size: 13px;
+    line-height: 1.5;
+}
+.progress-track {
+    margin-top: 13px;
+    height: 12px;
+    border-radius: 999px;
+    background: #292d35;
+    overflow: hidden;
+}
+.progress-fill {
+    width: 0%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #8f97a3, #f5f7fa);
+    transition: width .25s ease;
+}
+.goal-note {
+    margin-top: 8px;
+    color: #777f8c;
+    font-size: 12px;
+    line-height: 1.5;
+}
+.stats {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0,1fr));
+    gap: 8px;
+    margin-top: 10px;
+}
+.stat {
+    min-width: 0;
+    padding: 13px 10px;
+    border: 1px solid #272b33;
+    border-radius: 11px;
+    background: #14171c;
+    text-align: center;
+}
+.stat-label {
+    display: block;
+    color: #7f8793;
+    font-size: 11px;
+}
+.stat-value {
+    display: block;
+    margin-top: 4px;
+    font-size: clamp(16px, 2.5vw, 21px);
+    font-weight: 850;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.section-title {
+    margin: 34px 0 12px;
+    font-size: 21px;
+    letter-spacing: -.02em;
+}
 .tier {
     display: grid;
-    grid-template-columns: 60px 1fr;
-
-    min-height: 75px;
-
-    margin-bottom: 6px;
+    grid-template-columns: 64px minmax(0,1fr);
+    min-height: 76px;
+    margin-bottom: 7px;
 }
-
 .tier-label {
     display: grid;
     place-items: center;
-
     color: #111;
-
-    font-size: 28px;
-    font-weight: 900;
+    font-size: 29px;
+    font-weight: 1000;
 }
-
-.S { background: #ff8080; }
-.A { background: #ffbd78; }
-.B { background: #ffff80; }
-.C { background: #80ff80; }
-.D { background: #80bfff; }
-
+.tier-label.S { background: #ff8080; }
+.tier-label.A { background: #ffbd78; }
+.tier-label.B { background: #fff37d; }
+.tier-label.C { background: #82e98a; }
+.tier-label.D { background: #82b8ff; }
 .tier-colors {
     display: flex;
     flex-wrap: wrap;
-
-    gap: 5px;
-
+    gap: 6px;
+    align-content: flex-start;
     padding: 7px;
-
-    background: #1c1c1c;
+    background: #16191e;
+    border: 1px solid #252932;
+    border-left: 0;
 }
-
 .rank-color {
     position: relative;
-
-    width: 48px;
-    height: 48px;
-
-    border-radius: 5px;
-
-    border: 1px solid rgba(255,255,255,0.12);
+    width: 49px;
+    height: 49px;
+    flex: 0 0 49px;
+    border-radius: 7px;
+    border: 1px solid rgba(255,255,255,.11);
+    overflow: hidden;
 }
-
 .rank-number {
     position: absolute;
-
-    left: 3px;
     top: 3px;
-
-    min-width: 18px;
-    height: 18px;
-
+    left: 3px;
+    min-width: 20px;
+    height: 19px;
     padding: 0 4px;
-
     display: grid;
     place-items: center;
-
     border-radius: 999px;
-
-    background: rgba(0,0,0,0.75);
-    color: white;
-
+    background: rgba(0,0,0,.72);
+    color: #fff;
     font-size: 10px;
     font-weight: 900;
 }
-
-.done {
-    opacity: 0.65;
+.rank-confidence {
+    position: absolute;
+    left: 3px;
+    right: 3px;
+    bottom: 3px;
+    height: 3px;
+    border-radius: 99px;
+    overflow: hidden;
+    background: rgba(0,0,0,.28);
 }
+.rank-confidence > span {
+    display: block;
+    height: 100%;
+    background: rgba(255,255,255,.9);
+}
+.footer-note {
+    margin-top: 18px;
+    color: #707783;
+    font-size: 12px;
+    line-height: 1.6;
+}
+.hidden-input { display:none; }
 
-@media (max-width: 650px) {
-    main {
-        padding: 12px;
-    }
-
+@media (max-width: 720px) {
+    .app { padding: 16px 12px 34px; }
+    .hero { margin-bottom: 14px; }
     .battle {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: minmax(0,1fr) minmax(0,1fr);
         gap: 8px;
     }
-
-    .vs {
-        display: none;
-    }
-
+    .vs { display: none; }
     .color-button {
-        height: 280px;
+        height: clamp(245px, 72vw, 330px);
+        border-radius: 16px;
     }
-
-    .stats {
-        grid-template-columns: 1fr 1fr;
+    .color-info {
+        left: 8px;
+        right: 8px;
+        bottom: 8px;
+        padding: 9px 10px;
+        border-radius: 9px;
+    }
+    .toolbar {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0,1fr));
+    }
+    .toolbar .btn { width: 100%; }
+    .progress-head { align-items: start; }
+    .status-text { max-width: 46%; }
+    .stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .tier { grid-template-columns: 46px minmax(0,1fr); }
+    .tier-label { font-size: 23px; }
+    .tier-colors { gap: 5px; padding: 5px; }
+    .rank-color {
+        width: 42px;
+        height: 42px;
+        flex-basis: 42px;
+    }
+}
+@media (max-width: 380px) {
+    .rgb { display: none; }
+    .toolbar { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .001ms !important;
+        transition-duration: .001ms !important;
     }
 }
 </style>
 </head>
-
 <body>
+<main class="app">
+    <header class="hero">
+        <h1>Color Battle</h1>
+        <p id="subtitle">より好きな色を選択</p>
+    </header>
 
-<main>
+    <section class="battle" aria-label="色比較">
+        <button id="leftColor" class="color-button" type="button" aria-label="左の色を選択">
+            <div class="color-info">
+                <div id="leftHex" class="hex"></div>
+                <div id="leftRgb" class="rgb"></div>
+            </div>
+        </button>
 
-<h1>Color Battle</h1>
+        <div class="vs" aria-hidden="true">VS</div>
 
-<div id="subtitle" class="subtitle">
-    より好きな色を選択
-</div>
+        <button id="rightColor" class="color-button" type="button" aria-label="右の色を選択">
+            <div class="color-info">
+                <div id="rightHex" class="hex"></div>
+                <div id="rightRgb" class="rgb"></div>
+            </div>
+        </button>
+    </section>
 
-
-<div class="battle">
-
-    <button
-        id="leftColor"
-        class="color-button"
-        type="button"
-    >
-        <div class="color-info">
-            <div id="leftHex" class="hex"></div>
-            <div id="leftRgb" class="rgb"></div>
-        </div>
-    </button>
-
-    <div class="vs">
-        VS
+    <div class="toolbar">
+        <button id="skip" class="btn" type="button">スキップ</button>
+        <button id="exportImage" class="btn primary" type="button">ランキング画像を保存</button>
+        <button id="exportData" class="btn" type="button">データを書き出す</button>
+        <button id="importData" class="btn" type="button">データを復元</button>
+        <button id="reset" class="btn danger" type="button">全データ削除</button>
+        <input id="importFile" class="hidden-input" type="file" accept="application/json,.json">
     </div>
 
-    <button
-        id="rightColor"
-        class="color-button"
-        type="button"
-    >
-        <div class="color-info">
-            <div id="rightHex" class="hex"></div>
-            <div id="rightRgb" class="rgb"></div>
-        </div>
-    </button>
-
-</div>
-
-
-<div class="controls">
-
-    <button id="skip" type="button">
-        スキップ
-    </button>
-
-    <button id="reset" type="button">
-        全データ削除
-    </button>
-
-</div>
-
-
-<div class="phase-panel">
-
-    <div class="phase-top">
-
-        <div>
-            <div class="phase-label">
-                現在のフェーズ
+    <section class="panel">
+        <div class="progress-head">
+            <div>
+                <div class="eyebrow">最終ランキング信頼度</div>
+                <div id="goalProbability" class="big-value">計算中</div>
             </div>
-
-            <div id="phaseName" class="phase-name">
-                Tier分類
+            <div id="progressStatus" class="status-text">
+                近傍順位を重点比較
             </div>
         </div>
 
-        <div id="progressPercent" class="progress-percent">
-            0%
+        <div class="progress-track" aria-hidden="true">
+            <div id="progressFill" class="progress-fill"></div>
         </div>
 
-    </div>
+        <div class="goal-note">
+            目標: 125色の90%以上が±5位以内、Top10が±2位以内、さらに1〜3位の順番が完全一致する確率が90%以上。
+            Tierは比較制約には使わず、現在順位から表示だけを行います。
+        </div>
+    </section>
 
-    <div class="progress-track">
-        <div id="progressBar" class="progress-bar"></div>
-    </div>
+    <section class="stats">
+        <div class="stat">
+            <span class="stat-label">総比較回数</span>
+            <strong id="battleCount" class="stat-value">0</strong>
+        </div>
+        <div class="stat">
+            <span class="stat-label">±5条件 90%信頼</span>
+            <strong id="normalTrusted" class="stat-value">0 / 113</strong>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Top10 ±2 90%信頼</span>
+            <strong id="topTrusted" class="stat-value">0 / 10</strong>
+        </div>
+        <div class="stat">
+            <span class="stat-label">Top3 順位完全一致</span>
+            <strong id="top3Exact" class="stat-value">0%</strong>
+        </div>
+        <div class="stat">
+            <span class="stat-label">ブラウザ保存</span>
+            <strong id="saveStatus" class="stat-value">-</strong>
+        </div>
+    </section>
 
-</div>
-
-
-<div class="stats">
-
-    <div class="stat">
-        <span class="stat-label">
-            総比較回数
-        </span>
-
-        <span
-            id="battleCount"
-            class="stat-value"
-        >
-            0
-        </span>
-    </div>
-
-    <div class="stat">
-        <span class="stat-label">
-            Tier確定
-        </span>
-
-        <span
-            id="settledCount"
-            class="stat-value"
-        >
-            0 / 125
-        </span>
-    </div>
-
-    <div class="stat">
-        <span class="stat-label">
-            色数
-        </span>
-
-        <span
-            id="colorCount"
-            class="stat-value"
-        >
-            125
-        </span>
-    </div>
-
-    <div class="stat">
-        <span class="stat-label">
-            ブラウザ保存
-        </span>
-
-        <span
-            id="saveStatus"
-            class="stat-value"
-        >
-            -
-        </span>
-    </div>
-
-</div>
-
-
-<div class="ranking">
-
-    <h2>Color Tier</h2>
-
+    <h2 class="section-title">Current Ranking</h2>
     <div id="tiers"></div>
 
-</div>
-
+    <p class="footer-note">
+        左右キーでも選択できます。内部レートは表示しません。
+        画像出力は高解像度PNGで、順位・HEX・Tierをまとめて保存します。
+    </p>
 </main>
 
-
-<script>
-
-/* =========================================================
-   Config
-========================================================= */
-
-const SAVE_KEY =
-    "color-battle-tier-rank-v1";
-
-const SAVE_VERSION =
-    1;
-
-const RGB_STEP =
-    64;
-
-
-/* TrueSkill系 */
-
-const INITIAL_MU =
-    25;
-
-const INITIAL_SIGMA =
-    INITIAL_MU / 3;
-
-const BETA =
-    INITIAL_MU / 6;
-
-const TAU =
-    INITIAL_MU / 300;
-
-
-/* Tier分類 */
-
-const RANK_Z =
-    1.64;
-
-const BOOTSTRAP_GAMES =
-    2;
-
-
-/*
-    98%の色についてTierが確定し、
-    総合進捗が92%以上になったら
-    Tierを固定する。
-*/
-
-const TIER_SETTLED_TARGET =
-    0.98;
-
-const TIER_PROGRESS_TARGET =
-    0.92;
-
-
-/* Tier内順位 */
-
-const RANK_TARGET_GAMES =
-    8;
-
-const RANK_MIN_GAMES =
-    3;
-
-const RANK_PROGRESS_TARGET =
-    0.92;
-
-
-const FEEDBACK_TIME =
-    170;
-
-
-const TIER_NAMES =
-    [
-        "S",
-        "A",
-        "B",
-        "C",
-        "D"
-    ];
-
-
-/* =========================================================
-   State
-========================================================= */
-
-let colors = [];
-
-let leftColor = null;
-let rightColor = null;
-
-let battleCount = 0;
-
-let phase = "tier";
-
-/*
-    tier
-    rank
-    done
-*/
-
-let activeRankTierIndex = 0;
-
-let rankTierDone = {
-    S: false,
-    A: false,
-    B: false,
-    C: false,
-    D: false
-};
-
-let tierPairCounts =
-    new Map();
-
-let rankPairCounts =
-    new Map();
-
-let inputLocked =
-    false;
-
-
-/* =========================================================
-   Basic
-========================================================= */
-
-function clamp(
-    value,
-    min,
-    max
-) {
-
-    return Math.min(
-        max,
-        Math.max(
-            min,
-            value
-        )
-    );
-}
-
-
-function toHex(color) {
-
-    const hex =
-        value =>
-            value
-                .toString(16)
-                .padStart(2, "0")
-                .toUpperCase();
-
-
-    return (
-        "#" +
-        hex(color.r) +
-        hex(color.g) +
-        hex(color.b)
-    );
-}
-
-
-/* =========================================================
-   Normal distribution
-========================================================= */
-
-function erf(x) {
-
-    const sign =
-        x < 0 ? -1 : 1;
-
-    x =
-        Math.abs(x);
-
-
-    const a1 = 0.254829592;
-    const a2 = -0.284496736;
-    const a3 = 1.421413741;
-    const a4 = -1.453152027;
-    const a5 = 1.061405429;
-    const p = 0.3275911;
-
-
-    const t =
-        1 /
-        (
-            1 +
-            p * x
-        );
-
-
-    const y =
-        1 -
-        (
-            (
-                (
-                    (
-                        (
-                            a5 * t +
-                            a4
-                        ) * t +
-                        a3
-                    ) * t +
-                    a2
-                ) * t +
-                a1
-            )
-            *
-            t
-            *
-            Math.exp(
-                -x * x
-            )
-        );
-
-
-    return sign * y;
-}
-
-
-function normalPdf(x) {
-
-    return (
-        Math.exp(
-            -0.5 *
-            x *
-            x
-        )
-        /
-        Math.sqrt(
-            2 *
-            Math.PI
-        )
-    );
-}
-
-
-function normalCdf(x) {
-
-    return (
-        0.5 *
-        (
-            1 +
-            erf(
-                x /
-                Math.SQRT2
-            )
-        )
-    );
-}
-
-
-/* =========================================================
-   Colors
-========================================================= */
-
-function createColors() {
-
-    const values = [];
-
-    for (
-        let value = 0;
-        value <= 255;
-        value += RGB_STEP
-    ) {
-
-        values.push(value);
-    }
-
-
-    if (
-        values[
-            values.length - 1
-        ]
-        !== 255
-    ) {
-
-        values.push(255);
-    }
-
-
-    colors = [];
-
-    let id = 0;
-
-
-    for (const r of values) {
-
-        for (const g of values) {
-
-            for (const b of values) {
-
-                colors.push({
-
-                    id: id++,
-
-                    r,
-                    g,
-                    b,
-
-                    /* Tier分類 */
-
-                    mu:
-                        INITIAL_MU,
-
-                    sigma:
-                        INITIAL_SIGMA,
-
-                    games:
-                        0,
-
-                    /* 固定Tier */
-
-                    tier:
-                        null,
-
-                    /* Tier内順位 */
-
-                    rankMu:
-                        null,
-
-                    rankSigma:
-                        null,
-
-                    rankInitialSigma:
-                        null,
-
-                    rankGames:
-                        0
-
-                });
-
-            }
-
-        }
-
-    }
-}
-
-
-/* =========================================================
-   Pair history
-========================================================= */
-
-function pairKey(
-    a,
-    b
-) {
-
-    const min =
-        Math.min(
-            a.id,
-            b.id
-        );
-
-    const max =
-        Math.max(
-            a.id,
-            b.id
-        );
-
-    return `${min}-${max}`;
-}
-
-
-function getPairCount(
-    map,
-    a,
-    b
-) {
-
-    return (
-        map.get(
-            pairKey(a, b)
-        )
-        ?? 0
-    );
-}
-
-
-function addPairCount(
-    map,
-    a,
-    b
-) {
-
-    const key =
-        pairKey(a, b);
-
-
-    map.set(
-        key,
-        (
-            map.get(key)
-            ?? 0
-        ) + 1
-    );
-}
-
-
-/* =========================================================
-   TrueSkill update
-========================================================= */
-
-function updateTrueSkill(
-    winner,
-    loser,
-    muKey,
-    sigmaKey
-) {
-
-    const winnerSigma =
-        Math.sqrt(
-            winner[sigmaKey] ** 2
-            +
-            TAU ** 2
-        );
-
-
-    const loserSigma =
-        Math.sqrt(
-            loser[sigmaKey] ** 2
-            +
-            TAU ** 2
-        );
-
-
-    const c =
-        Math.sqrt(
-
-            2 *
-            BETA *
-            BETA
-
-            +
-
-            winnerSigma ** 2
-
-            +
-
-            loserSigma ** 2
-        );
-
-
-    const t =
-        (
-            winner[muKey]
-            -
-            loser[muKey]
-        )
-        /
-        c;
-
-
-    const cdf =
-        Math.max(
-            normalCdf(t),
-            1e-9
-        );
-
-
-    const v =
-        normalPdf(t)
-        /
-        cdf;
-
-
-    const w =
-        v *
-        (
-            v + t
-        );
-
-
-    const winnerVariance =
-        winnerSigma ** 2;
-
-    const loserVariance =
-        loserSigma ** 2;
-
-
-    winner[muKey] +=
-        (
-            winnerVariance /
-            c
-        )
-        *
-        v;
-
-
-    loser[muKey] -=
-        (
-            loserVariance /
-            c
-        )
-        *
-        v;
-
-
-    winner[sigmaKey] =
-        Math.sqrt(
-            Math.max(
-
-                0.05,
-
-                winnerVariance *
-                (
-                    1
-                    -
-                    (
-                        winnerVariance /
-                        (c * c)
-                    )
-                    *
-                    w
-                )
-            )
-        );
-
-
-    loser[sigmaKey] =
-        Math.sqrt(
-            Math.max(
-
-                0.05,
-
-                loserVariance *
-                (
-                    1
-                    -
-                    (
-                        loserVariance /
-                        (c * c)
-                    )
-                    *
-                    w
-                )
-            )
-        );
-}
-
-
-/* =========================================================
-   Prediction
-========================================================= */
-
-function predictedProbability(
-    a,
-    b,
-    muKey,
-    sigmaKey
-) {
-
-    const c =
-        Math.sqrt(
-
-            2 *
-            BETA *
-            BETA
-
-            +
-
-            a[sigmaKey] ** 2
-
-            +
-
-            b[sigmaKey] ** 2
-        );
-
-
-    return clamp(
-
-        normalCdf(
-            (
-                a[muKey]
-                -
-                b[muKey]
-            )
-            /
-            c
-        ),
-
-        0.000001,
-        0.999999
-    );
-}
-
-
-function entropy(p) {
-
-    return (
-        -p *
-        Math.log2(p)
-
-        -
-
-        (1 - p) *
-        Math.log2(
-            1 - p
-        )
-    );
-}
-
-
-/* =========================================================
-   Tier classification
-========================================================= */
-
-function tierRankingValue(
-    color
-) {
-
-    return (
-        color.mu
-        -
-        color.sigma *
-        0.7
-    );
-}
-
-
-function getTierCuts(total) {
-
-    return [
-        Math.ceil(total * 0.10),
-        Math.ceil(total * 0.30),
-        Math.ceil(total * 0.60),
-        Math.ceil(total * 0.85)
-    ];
-}
-
-
-function getTierName(
-    index,
-    total
-) {
-
-    const ratio =
-        index /
-        total;
-
-
-    if (ratio < 0.10) {
-        return "S";
-    }
-
-    if (ratio < 0.30) {
-        return "A";
-    }
-
-    if (ratio < 0.60) {
-        return "B";
-    }
-
-    if (ratio < 0.85) {
-        return "C";
-    }
-
-    return "D";
-}
-
-
-function getTierSortedColors() {
-
-    return [...colors].sort(
-        (a, b) =>
-            tierRankingValue(b)
-            -
-            tierRankingValue(a)
-    );
-}
-
-
-/* ---------------------------------------------------------
-   各色がTier境界をまたいでいるか
---------------------------------------------------------- */
-
-function buildTierState() {
-
-    const total =
-        colors.length;
-
-    const cuts =
-        getTierCuts(total);
-
-    const state =
-        new Map();
-
-
-    for (const color of colors) {
-
-        const low =
-            color.mu
-            -
-            RANK_Z *
-            color.sigma;
-
-        const high =
-            color.mu
-            +
-            RANK_Z *
-            color.sigma;
-
-
-        let bestRank = 0;
-        let worstRank = 0;
-
-
-        for (const other of colors) {
-
-            if (
-                other === color
-            ) {
-                continue;
-            }
-
-
-            const otherLow =
-                other.mu
-                -
-                RANK_Z *
-                other.sigma;
-
-
-            const otherHigh =
-                other.mu
-                +
-                RANK_Z *
-                other.sigma;
-
-
-            if (
-                otherLow >
-                high
-            ) {
-                bestRank++;
-            }
-
-
-            if (
-                otherHigh >
-                low
-            ) {
-                worstRank++;
-            }
-        }
-
-
-        let boundaryMask =
-            0;
-
-
-        cuts.forEach(
-            (cut, index) => {
-
-                if (
-                    bestRank < cut
-                    &&
-                    worstRank >= cut
-                ) {
-
-                    boundaryMask |=
-                        1 << index;
-                }
-
-            }
-        );
-
-
-        const settled =
-            color.games >=
-            BOOTSTRAP_GAMES
-            &&
-            boundaryMask === 0;
-
-
-        const rankWidth =
-            (
-                worstRank -
-                bestRank
-            )
-            /
-            Math.max(
-                total - 1,
-                1
-            );
-
-
-        state.set(
-            color.id,
-            {
-                settled,
-                boundaryMask,
-                rankWidth,
-                bestRank,
-                worstRank
-            }
-        );
-    }
-
-
-    return state;
-}
-
-
-/* ---------------------------------------------------------
-   Tier分類の進捗
---------------------------------------------------------- */
-
-function calculateTierProgress() {
-
-    const state =
-        buildTierState();
-
-
-    let settledCount =
-        0;
-
-    let rankResolution =
-        0;
-
-    let sigmaResolution =
-        0;
-
-
-    for (const color of colors) {
-
-        const info =
-            state.get(
-                color.id
-            );
-
-
-        if (
-            info.settled
-        ) {
-            settledCount++;
-        }
-
-
-        rankResolution +=
-            1 -
-            info.rankWidth;
-
-
-        sigmaResolution +=
-            1 -
-            clamp(
-                color.sigma /
-                INITIAL_SIGMA,
-                0,
-                1
-            );
-    }
-
-
-    rankResolution /=
-        colors.length;
-
-    sigmaResolution /=
-        colors.length;
-
-
-    const settledRatio =
-        settledCount /
-        colors.length;
-
-
-    const progress =
-        clamp(
-
-            settledRatio * 0.72
-
-            +
-
-            rankResolution * 0.18
-
-            +
-
-            sigmaResolution * 0.10,
-
-            0,
-            1
-        );
-
-
-    return {
-        progress,
-        settledRatio,
-        settledCount
-    };
-}
-
-
-/* ---------------------------------------------------------
-   Tier分類用対戦
---------------------------------------------------------- */
-
-function chooseTierPair() {
-
-    const tierState =
-        buildTierState();
-
-
-    let bestPair =
-        null;
-
-    let bestScore =
-        -Infinity;
-
-
-    for (
-        let i = 0;
-        i < colors.length;
-        i++
-    ) {
-
-        const a =
-            colors[i];
-
-        const stateA =
-            tierState.get(
-                a.id
-            );
-
-
-        for (
-            let j = i + 1;
-            j < colors.length;
-            j++
-        ) {
-
-            const b =
-                colors[j];
-
-            const stateB =
-                tierState.get(
-                    b.id
-                );
-
-
-            if (
-                stateA.settled
-                &&
-                stateB.settled
-            ) {
-                continue;
-            }
-
-
-            const repeats =
-                getPairCount(
-                    tierPairCounts,
-                    a,
-                    b
-                );
-
-
-            if (
-                repeats >= 3
-            ) {
-                continue;
-            }
-
-
-            const bootstrap =
-                (
-                    a.games <
-                    BOOTSTRAP_GAMES
-                        ? 1
-                        : 0
-                )
-                +
-                (
-                    b.games <
-                    BOOTSTRAP_GAMES
-                        ? 1
-                        : 0
-                );
-
-
-            const boundaryNeed =
-                (
-                    stateA.boundaryMask
-                    ? 1
-                    : 0
-                )
-                +
-                (
-                    stateB.boundaryMask
-                    ? 1
-                    : 0
-                );
-
-
-            const sharedBoundary =
-                (
-                    stateA.boundaryMask
-                    &
-                    stateB.boundaryMask
-                )
-                !== 0;
-
-
-            const p =
-                predictedProbability(
-                    a,
-                    b,
-                    "mu",
-                    "sigma"
-                );
-
-
-            const information =
-                entropy(p);
-
-
-            const uncertainty =
-                clamp(
-                    (
-                        a.sigma +
-                        b.sigma
-                    )
-                    /
-                    (
-                        INITIAL_SIGMA *
-                        2
-                    ),
-                    0,
-                    1
-                );
-
-
-            let score =
-
-                (
-                    bootstrap * 9
-
-                    +
-
-                    boundaryNeed * 5
-
-                    +
-
-                    (
-                        stateA.rankWidth
-                        +
-                        stateB.rankWidth
-                    ) * 2
-
-                    +
-
-                    uncertainty * 1.5
-
-                    +
-
-                    0.1
-                )
-
-                *
-
-                (
-                    0.15
-                    +
-                    information *
-                    0.85
-                )
-
-                /
-
-                (
-                    1 +
-                    repeats * 2.5
-                );
-
-
-            if (
-                sharedBoundary
-            ) {
-
-                score *=
-                    2.0;
-            }
-
-
-            score +=
-                Math.random() *
-                0.005;
-
-
-            if (
-                score >
-                bestScore
-            ) {
-
-                bestScore =
-                    score;
-
-                bestPair =
-                    [a, b];
-            }
-        }
-    }
-
-
-    if (
-        !bestPair
-    ) {
-
-        const sorted =
-            [...colors]
-                .sort(
-                    (a, b) =>
-                        b.sigma -
-                        a.sigma
-                );
-
-
-        bestPair =
-            [
-                sorted[0],
-                sorted[1]
-            ];
-    }
-
-
-    return bestPair;
-}
-
-
-/* =========================================================
-   Tier確定 → 順位フェーズ開始
-========================================================= */
-
-function freezeTiers() {
-
-    const sorted =
-        getTierSortedColors();
-
-
-    sorted.forEach(
-        (color, index) => {
-
-            color.tier =
-                getTierName(
-                    index,
-                    sorted.length
-                );
-
-
-            /*
-                Tier分類時に得た情報を捨てず、
-                順位フェーズの初期値として利用。
-            */
-
-            color.rankMu =
-                color.mu;
-
-            color.rankSigma =
-                color.sigma;
-
-            color.rankInitialSigma =
-                color.sigma;
-
-            color.rankGames =
-                0;
-        }
-    );
-
-
-    phase =
-        "rank";
-
-    activeRankTierIndex =
-        0;
-
-
-    rankTierDone = {
-        S: false,
-        A: false,
-        B: false,
-        C: false,
-        D: false
-    };
-
-
-    rankPairCounts.clear();
-}
-
-
-/* =========================================================
-   Tier内ランキング
-========================================================= */
-
-function getActiveRankTier() {
-
-    return (
-        TIER_NAMES[
-            activeRankTierIndex
-        ]
-        ?? null
-    );
-}
-
-
-function getTierMembers(
-    tierName
-) {
-
-    return colors.filter(
-        color =>
-            color.tier ===
-            tierName
-    );
-}
-
-
-function getRankSorted(
-    tierName
-) {
-
-    return (
-        getTierMembers(tierName)
-            .sort(
-                (a, b) =>
-                    b.rankMu -
-                    a.rankMu
-            )
-    );
-}
-
-
-/* ---------------------------------------------------------
-   Tier内順位の収束度
---------------------------------------------------------- */
-
-function calculateRankProgress(
-    tierName
-) {
-
-    const members =
-        getTierMembers(
-            tierName
-        );
-
-
-    if (
-        members.length <= 1
-    ) {
-        return 1;
-    }
-
-
-    const averageCoverage =
-        members.reduce(
-            (sum, color) =>
-                sum +
-                clamp(
-                    color.rankGames /
-                    RANK_TARGET_GAMES,
-                    0,
-                    1
-                ),
-            0
-        )
-        /
-        members.length;
-
-
-    const minGames =
-        Math.min(
-            ...members.map(
-                color =>
-                    color.rankGames
-            )
-        );
-
-
-    const minimumCoverage =
-        clamp(
-            minGames /
-            RANK_MIN_GAMES,
-            0,
-            1
-        );
-
-
-    const uncertaintyResolved =
-        members.reduce(
-            (sum, color) => {
-
-                const start =
-                    Math.max(
-                        color.rankInitialSigma,
-                        0.01
-                    );
-
-
-                return (
-                    sum
-                    +
-                    clamp(
-                        1 -
-                        color.rankSigma /
-                        start,
-                        0,
-                        1
-                    )
-                );
-
-            },
-            0
-        )
-        /
-        members.length;
-
-
-    /*
-        隣り合う色同士の順位確信度。
-    */
-
-    const sorted =
-        getRankSorted(
-            tierName
-        );
-
-
-    let adjacency =
-        0;
-
-
-    for (
-        let i = 0;
-        i < sorted.length - 1;
-        i++
-    ) {
-
-        const higher =
-            sorted[i];
-
-        const lower =
-            sorted[i + 1];
-
-
-        const p =
-            predictedProbability(
-                higher,
-                lower,
-                "rankMu",
-                "rankSigma"
-            );
-
-
-        adjacency +=
-            clamp(
-                (
-                    p -
-                    0.5
-                )
-                /
-                0.25,
-                0,
-                1
-            );
-    }
-
-
-    adjacency /=
-        sorted.length - 1;
-
-
-    return clamp(
-
-        averageCoverage * 0.42
-
-        +
-
-        minimumCoverage * 0.18
-
-        +
-
-        uncertaintyResolved * 0.18
-
-        +
-
-        adjacency * 0.22,
-
-        0,
-        1
-    );
-}
-
-
-/* ---------------------------------------------------------
-   Tier内で最も価値の高い対戦
---------------------------------------------------------- */
-
-function chooseRankPair(
-    tierName
-) {
-
-    const members =
-        getRankSorted(
-            tierName
-        );
-
-
-    let bestPair =
-        null;
-
-    let bestScore =
-        -Infinity;
-
-
-    for (
-        let i = 0;
-        i < members.length;
-        i++
-    ) {
-
-        const a =
-            members[i];
-
-
-        for (
-            let j = i + 1;
-            j < members.length;
-            j++
-        ) {
-
-            const b =
-                members[j];
-
-
-            const repeats =
-                getPairCount(
-                    rankPairCounts,
-                    a,
-                    b
-                );
-
-
-            if (
-                repeats >= 4
-            ) {
-                continue;
-            }
-
-
-            const p =
-                predictedProbability(
-                    a,
-                    b,
-                    "rankMu",
-                    "rankSigma"
-                );
-
-
-            const information =
-                entropy(p);
-
-
-            const underPlayed =
-                (
-                    clamp(
-                        (
-                            RANK_TARGET_GAMES
-                            -
-                            a.rankGames
-                        )
-                        /
-                        RANK_TARGET_GAMES,
-                        0,
-                        1
-                    )
-
-                    +
-
-                    clamp(
-                        (
-                            RANK_TARGET_GAMES
-                            -
-                            b.rankGames
-                        )
-                        /
-                        RANK_TARGET_GAMES,
-                        0,
-                        1
-                    )
-                );
-
-
-            const uncertainty =
-                (
-                    a.rankSigma
-                    +
-                    b.rankSigma
-                )
-                /
-                2;
-
-
-            /*
-                現在順位で隣接している色は
-                最終順位決定に重要。
-            */
-
-            const distance =
-                Math.abs(
-                    i - j
-                );
-
-
-            const adjacencyBoost =
-                distance === 1
-                    ? 2.4
-                    :
-                distance === 2
-                    ? 1.5
-                    :
-                    1;
-
-
-            const score =
-
-                (
-                    information * 4
-
-                    +
-
-                    underPlayed * 2.5
-
-                    +
-
-                    uncertainty * 0.15
-
-                    +
-
-                    0.1
-                )
-
-                *
-
-                adjacencyBoost
-
-                /
-
-                (
-                    1 +
-                    repeats *
-                    2
-                );
-
-
-            if (
-                score >
-                bestScore
-            ) {
-
-                bestScore =
-                    score;
-
-                bestPair =
-                    [a, b];
-            }
-        }
-    }
-
-
-    if (
-        !bestPair
-    ) {
-
-        bestPair =
-            [
-                members[0],
-                members[1]
-            ];
-    }
-
-
-    return bestPair;
-}
-
-
-/* =========================================================
-   Phase transition
-========================================================= */
-
-function checkPhaseTransition() {
-
-    if (
-        phase === "tier"
-    ) {
-
-        const info =
-            calculateTierProgress();
-
-
-        if (
-            info.settledRatio >=
-            TIER_SETTLED_TARGET
-
-            &&
-
-            info.progress >=
-            TIER_PROGRESS_TARGET
-        ) {
-
-            freezeTiers();
-        }
-
-        return;
-    }
-
-
-    if (
-        phase === "rank"
-    ) {
-
-        const tier =
-            getActiveRankTier();
-
-
-        if (!tier) {
-
-            phase =
-                "done";
-
-            return;
-        }
-
-
-        const progress =
-            calculateRankProgress(
-                tier
-            );
-
-
-        const members =
-            getTierMembers(
-                tier
-            );
-
-
-        const minimumGames =
-            Math.min(
-                ...members.map(
-                    color =>
-                        color.rankGames
-                )
-            );
-
-
-        if (
-            progress >=
-            RANK_PROGRESS_TARGET
-
-            &&
-
-            minimumGames >=
-            RANK_MIN_GAMES
-        ) {
-
-            rankTierDone[tier] =
-                true;
-
-
-            activeRankTierIndex++;
-
-
-            if (
-                activeRankTierIndex >=
-                TIER_NAMES.length
-            ) {
-
-                phase =
-                    "done";
-            }
-        }
-    }
-}
-
-
-/* =========================================================
-   Next Battle
-========================================================= */
-
-function nextBattle() {
-
-    checkPhaseTransition();
-
-
-    if (
-        phase === "done"
-    ) {
-
-        leftColor =
-            null;
-
-        rightColor =
-            null;
-
-        renderAll();
-        saveState();
-
-        return;
-    }
-
-
-    let pair;
-
-
-    if (
-        phase === "tier"
-    ) {
-
-        pair =
-            chooseTierPair();
-
-    }
-    else {
-
-        pair =
-            chooseRankPair(
-                getActiveRankTier()
-            );
-    }
-
-
-    [
-        leftColor,
-        rightColor
-    ] =
-        pair;
-
-
-    /*
-        左右位置バイアス軽減
-    */
-
-    if (
-        Math.random()
-        <
-        0.5
-    ) {
-
-        [
-            leftColor,
-            rightColor
-        ] =
-        [
-            rightColor,
-            leftColor
-        ];
-    }
-
-
-    renderAll();
-
-    saveState();
-}
-
-
-/* =========================================================
-   Selection
-========================================================= */
-
-function processChoice(
-    winner,
-    loser
-) {
-
-    if (
-        phase === "tier"
-    ) {
-
-        updateTrueSkill(
-            winner,
-            loser,
-            "mu",
-            "sigma"
-        );
-
-
-        winner.games++;
-        loser.games++;
-
-
-        addPairCount(
-            tierPairCounts,
-            winner,
-            loser
-        );
-    }
-
-
-    else if (
-        phase === "rank"
-    ) {
-
-        updateTrueSkill(
-            winner,
-            loser,
-            "rankMu",
-            "rankSigma"
-        );
-
-
-        winner.rankGames++;
-        loser.rankGames++;
-
-
-        addPairCount(
-            rankPairCounts,
-            winner,
-            loser
-        );
-    }
-
-
-    battleCount++;
-}
-
-
-/* =========================================================
-   Save / Load
-========================================================= */
-
-function saveState() {
-
-    try {
-
-        const data = {
-
-            version:
-                SAVE_VERSION,
-
-            battleCount,
-
-            phase,
-
-            activeRankTierIndex,
-
-            rankTierDone,
-
-            colors,
-
-            tierPairCounts:
-                [...tierPairCounts.entries()],
-
-            rankPairCounts:
-                [...rankPairCounts.entries()],
-
-            leftColorId:
-                leftColor
-                    ? leftColor.id
-                    : null,
-
-            rightColorId:
-                rightColor
-                    ? rightColor.id
-                    : null,
-
-            savedAt:
-                Date.now()
-        };
-
-
-        localStorage.setItem(
-            SAVE_KEY,
-            JSON.stringify(data)
-        );
-
-
-        document
-            .getElementById(
-                "saveStatus"
-            )
-            .textContent =
-            "保存済";
-    }
-
-    catch (error) {
-
-        document
-            .getElementById(
-                "saveStatus"
-            )
-            .textContent =
-            "使用不可";
-
-        console.error(error);
-    }
-}
-
-
-function loadState() {
-
-    try {
-
-        const raw =
-            localStorage.getItem(
-                SAVE_KEY
-            );
-
-
-        if (!raw) {
-            return false;
-        }
-
-
-        const data =
-            JSON.parse(raw);
-
-
-        if (
-            data.version !==
-            SAVE_VERSION
-        ) {
-
-            return false;
-        }
-
-
-        if (
-            !Array.isArray(
-                data.colors
-            )
-        ) {
-
-            return false;
-        }
-
-
-        colors =
-            data.colors;
-
-        battleCount =
-            data.battleCount ?? 0;
-
-        phase =
-            data.phase ?? "tier";
-
-        activeRankTierIndex =
-            data.activeRankTierIndex ?? 0;
-
-        rankTierDone =
-            data.rankTierDone
-            ??
-            {
-                S: false,
-                A: false,
-                B: false,
-                C: false,
-                D: false
-            };
-
-
-        tierPairCounts =
-            new Map(
-                data.tierPairCounts
-                ?? []
-            );
-
-
-        rankPairCounts =
-            new Map(
-                data.rankPairCounts
-                ?? []
-            );
-
-
-        leftColor =
-            colors.find(
-                color =>
-                    color.id ===
-                    data.leftColorId
-            )
-            ?? null;
-
-
-        rightColor =
-            colors.find(
-                color =>
-                    color.id ===
-                    data.rightColorId
-            )
-            ?? null;
-
-
-        return true;
-    }
-
-    catch (error) {
-
-        console.error(error);
-
-        return false;
-    }
-}
-
-
-function clearSave() {
-
-    try {
-
-        localStorage.removeItem(
-            SAVE_KEY
-        );
-
-    }
-    catch (_) {
-    }
-}
-
-
-/* =========================================================
-   Render Battle
-========================================================= */
-
-function renderColor(
-    side,
-    color
-) {
-
-    const button =
-        document.getElementById(
-            side + "Color"
-        );
-
-
-    if (!color) {
-
-        button.style.background =
-            "#222";
-
-        button.disabled =
-            true;
-
-        document
-            .getElementById(
-                side + "Hex"
-            )
-            .textContent =
-            "完了";
-
-        document
-            .getElementById(
-                side + "Rgb"
-            )
-            .textContent =
-            "";
-
-        return;
-    }
-
-
-    button.disabled =
-        false;
-
-
-    button.style.background =
-        `rgb(${color.r},${color.g},${color.b})`;
-
-
-    document
-        .getElementById(
-            side + "Hex"
-        )
-        .textContent =
-        toHex(color);
-
-
-    document
-        .getElementById(
-            side + "Rgb"
-        )
-        .textContent =
-        `RGB(${color.r}, ${color.g}, ${color.b})`;
-}
-
-
-/* =========================================================
-   Render status
-========================================================= */
-
-function renderStatus() {
-
-    let progress =
-        0;
-
-    let phaseName =
-        "";
-
-    let subtitle =
-        "";
-
-
-    if (
-        phase === "tier"
-    ) {
-
-        const info =
-            calculateTierProgress();
-
-
-        progress =
-            info.progress;
-
-
-        phaseName =
-            "Tier分類中";
-
-
-        subtitle =
-            "より好きな色を選択";
-
-
-        document
-            .getElementById(
-                "settledCount"
-            )
-            .textContent =
-            `${info.settledCount} / ${colors.length}`;
-    }
-
-
-    else if (
-        phase === "rank"
-    ) {
-
-        const tier =
-            getActiveRankTier();
-
-
-        progress =
-            calculateRankProgress(
-                tier
-            );
-
-
-        phaseName =
-            `${tier} Tier 内順位決定中`;
-
-
-        subtitle =
-            `${tier} Tierの中で、より好きな色を選択`;
-
-
-        const finished =
-            Object.values(
-                rankTierDone
-            )
-            .filter(Boolean)
-            .length;
-
-
-        document
-            .getElementById(
-                "settledCount"
-            )
-            .textContent =
-            `Tier ${finished} / 5`;
-    }
-
-
-    else {
-
-        progress =
-            1;
-
-        phaseName =
-            "全ランキング確定";
-
-        subtitle =
-            "比較完了";
-
-
-        document
-            .getElementById(
-                "settledCount"
-            )
-            .textContent =
-            "完了";
-    }
-
-
-    document
-        .getElementById(
-            "phaseName"
-        )
-        .textContent =
-        phaseName;
-
-
-    document
-        .getElementById(
-            "subtitle"
-        )
-        .textContent =
-        subtitle;
-
-
-    const percent =
-        Math.round(
-            progress *
-            100
-        );
-
-
-    document
-        .getElementById(
-            "progressPercent"
-        )
-        .textContent =
-        percent + "%";
-
-
-    document
-        .getElementById(
-            "progressBar"
-        )
-        .style.width =
-        percent + "%";
-
-
-    document
-        .getElementById(
-            "battleCount"
-        )
-        .textContent =
-        battleCount.toLocaleString();
-
-
-    document
-        .getElementById(
-            "colorCount"
-        )
-        .textContent =
-        colors.length;
-}
-
-
-/* =========================================================
-   Render Tier
-========================================================= */
-
-function renderTier() {
-
-    const container =
-        document.getElementById(
-            "tiers"
-        );
-
-
-    container.innerHTML =
-        "";
-
-
-    let data = {
-        S: [],
-        A: [],
-        B: [],
-        C: [],
-        D: []
-    };
-
-
-    if (
-        phase === "tier"
-    ) {
-
-        const sorted =
-            getTierSortedColors();
-
-
-        sorted.forEach(
-            (color, index) => {
-
-                data[
-                    getTierName(
-                        index,
-                        sorted.length
-                    )
-                ]
-                .push(color);
-            }
-        );
-    }
-
-
-    else {
-
-        for (
-            const tier
-            of TIER_NAMES
-        ) {
-
-            data[tier] =
-                getRankSorted(
-                    tier
-                );
-        }
-    }
-
-
-    for (
-        const tierName
-        of TIER_NAMES
-    ) {
-
-        const row =
-            document.createElement(
-                "div"
-            );
-
-        row.className =
-            "tier";
-
-
-        const label =
-            document.createElement(
-                "div"
-            );
-
-        label.className =
-            `tier-label ${tierName}`;
-
-        label.textContent =
-            tierName;
-
-
-        if (
-            phase !== "tier"
-            &&
-            rankTierDone[tierName]
-        ) {
-
-            label.classList.add(
-                "done"
-            );
-        }
-
-
-        const list =
-            document.createElement(
-                "div"
-            );
-
-        list.className =
-            "tier-colors";
-
-
-        data[tierName]
-            .forEach(
-                (color, index) => {
-
-                    const item =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    item.className =
-                        "rank-color";
-
-
-                    item.style.background =
-                        `rgb(${color.r},${color.g},${color.b})`;
-
-
-                    /*
-                        Tier確定後は
-                        Tier内部順位を表示。
-                    */
-
-                    if (
-                        phase !==
-                        "tier"
-                    ) {
-
-                        const number =
-                            document.createElement(
-                                "span"
-                            );
-
-
-                        number.className =
-                            "rank-number";
-
-
-                        number.textContent =
-                            index + 1;
-
-
-                        item.appendChild(
-                            number
-                        );
-                    }
-
-
-                    item.title =
-                        [
-                            toHex(color),
-
-                            `RGB(${color.r}, ${color.g}, ${color.b})`
-                        ]
-                        .join("\n");
-
-
-                    list.appendChild(
-                        item
-                    );
-                }
-            );
-
-
-        row.appendChild(
-            label
-        );
-
-        row.appendChild(
-            list
-        );
-
-
-        container.appendChild(
-            row
-        );
-    }
-}
-
-
-/* =========================================================
-   Render
-========================================================= */
-
-function renderAll() {
-
-    renderColor(
-        "left",
-        leftColor
-    );
-
-    renderColor(
-        "right",
-        rightColor
-    );
-
-    renderStatus();
-
-    renderTier();
-}
-
-
-/* =========================================================
-   Animation
-========================================================= */
-
-function createBurst(
-    button,
-    event
-) {
-
-    const rect =
-        button
-            .getBoundingClientRect();
-
-
-    const burst =
-        document.createElement(
-            "span"
-        );
-
-
-    burst.className =
-        "burst";
-
-
-    /*
-        キーボード操作の場合は中央。
-    */
-
-    const x =
-        event.clientX
-            ? event.clientX -
-              rect.left
-            : rect.width / 2;
-
-
-    const y =
-        event.clientY
-            ? event.clientY -
-              rect.top
-            : rect.height / 2;
-
-
-    burst.style.left =
-        x + "px";
-
-    burst.style.top =
-        y + "px";
-
-
-    button.appendChild(
-        burst
-    );
-
-
-    setTimeout(
-        () =>
-            burst.remove(),
-        400
-    );
-}
-
-
-/* =========================================================
-   UI choice
-========================================================= */
-
-function handleChoice(
-    winner,
-    loser,
-    winnerButton,
-    loserButton,
-    event
-) {
-
-    if (
-        inputLocked
-        ||
-        phase === "done"
-    ) {
-        return;
-    }
-
-
-    inputLocked =
-        true;
-
-
-    createBurst(
-        winnerButton,
-        event
-    );
-
-
-    winnerButton
-        .classList
-        .add(
-            "chosen"
-        );
-
-
-    loserButton
-        .classList
-        .add(
-            "loser"
-        );
-
-
-    processChoice(
-        winner,
-        loser
-    );
-
-
-    /*
-        勝敗を即保存。
-
-        演出中にブラウザを閉じても
-        結果が残る。
-    */
-
-    saveState();
-
-
-    setTimeout(
-        () => {
-
-            winnerButton
-                .classList
-                .remove(
-                    "chosen"
-                );
-
-
-            loserButton
-                .classList
-                .remove(
-                    "loser"
-                );
-
-
-            nextBattle();
-
-
-            inputLocked =
-                false;
-
-        },
-        FEEDBACK_TIME
-    );
-}
-
-
-/* =========================================================
-   Events
-========================================================= */
-
-const leftButton =
-    document.getElementById(
-        "leftColor"
-    );
-
-
-const rightButton =
-    document.getElementById(
-        "rightColor"
-    );
-
-
-leftButton.addEventListener(
-    "click",
-    event => {
-
-        handleChoice(
-            leftColor,
-            rightColor,
-            leftButton,
-            rightButton,
-            event
-        );
-    }
-);
-
-
-rightButton.addEventListener(
-    "click",
-    event => {
-
-        handleChoice(
-            rightColor,
-            leftColor,
-            rightButton,
-            leftButton,
-            event
-        );
-    }
-);
-
-
-document
-    .getElementById(
-        "skip"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            if (
-                inputLocked
-                ||
-                phase === "done"
-            ) {
-                return;
-            }
-
-
-            nextBattle();
-        }
-    );
-
-
-document
-    .getElementById(
-        "reset"
-    )
-    .addEventListener(
-        "click",
-        () => {
-
-            if (
-                !confirm(
-                    "保存された比較結果をすべて削除しますか？"
-                )
-            ) {
-                return;
-            }
-
-
-            clearSave();
-
-
-            colors = [];
-
-            battleCount =
-                0;
-
-            phase =
-                "tier";
-
-            activeRankTierIndex =
-                0;
-
-            tierPairCounts =
-                new Map();
-
-            rankPairCounts =
-                new Map();
-
-            rankTierDone = {
-                S: false,
-                A: false,
-                B: false,
-                C: false,
-                D: false
-            };
-
-
-            createColors();
-
-            nextBattle();
-        }
-    );
-
-
-/* ← → でも選択 */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            inputLocked
-            ||
-            phase === "done"
-        ) {
-            return;
-        }
-
-
-        if (
-            event.key ===
-            "ArrowLeft"
-        ) {
-
-            leftButton.click();
-        }
-
-
-        else if (
-            event.key ===
-            "ArrowRight"
-        ) {
-
-            rightButton.click();
-        }
-    }
-);
-
-
-/* =========================================================
-   Init
-========================================================= */
-
-const loaded =
-    loadState();
-
-
-if (!loaded) {
-
-    createColors();
-
-    nextBattle();
-}
-
-else {
-
-    /*
-        セーブに対戦カードが存在しない場合のみ
-        新しいカードを生成。
-    */
-
-    if (
-        phase !== "done"
-        &&
-        (
-            !leftColor
-            ||
-            !rightColor
-        )
-    ) {
-
-        nextBattle();
-    }
-
-    else {
-
-        renderAll();
-
-        document
-            .getElementById(
-                "saveStatus"
-            )
-            .textContent =
-            "復元済";
-    }
-}
-
-</script>
-
+<script src="color-core.js"></script>
+<script src="color-ui.js"></script>
+<script src="color-init.js"></script>
 </body>
 </html>
